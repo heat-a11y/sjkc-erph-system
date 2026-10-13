@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>eRPH-PM AutoFill</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div id="app">
+    <header class="header">
+      <span class="logo">🇲🇾</span>
+      <div class="header-text">
+        <h1>eRPH-PM</h1>
+        <p>IDMe AutoFill</p>
+      </div>
+    </header>
+
+    <div class="status-bar" id="statusBar">
+      <span id="statusText">Siap</span>
+      <span class="spinner" id="spinner"></span>
+    </div>
+
+    <div class="section">
+      <label>Profil Aktif</label>
+      <select id="profileSelect" class="select"></select>
+    </div>
+
+    <div class="section">
+      <button id="fillBtn" class="btn btn-primary w-full">
+        🚀 Isi Otomatis
+      </button>
+    </div>
+
+    <div class="section">
+      <button id="openOptions" class="btn btn-secondary w-full">
+        ⚙️ Pengurusan Profil &amp; Medan
+      </button>
+    </div>
+
+    <div class="log-container" id="logContainer">
+      <div class="log-item" id="logEmpty">Tiada aktiviti lagi.</div>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

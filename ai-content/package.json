@@ -1,0 +1,19 @@
+{
+  "name": "erph-pm-ai",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AI content generator for eRPH-PM — LLM-powered RPH content for Malaysian KSSR lesson plans",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "vitest",
+    "test": "vitest run",
+    "build": "tsc --noEmit && echo 'Type-check OK'",
+    "lint": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.0",
+    "vitest": "^2.1.0",
+    "happy-dom": "^17.0.0"
+  }
+}

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pengurusan — eRPH-PM AutoFill</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <div id="app">
+    <header>
+      <h1>⚙️ Pengurusan eRPH-PM AutoFill</h1>
+    </header>
+
+    <nav class="tabs">
+      <button class="tab-btn active" data-tab="profiles">👤 Profil</button>
+      <button class="tab-btn" data-tab="mappings">📋 Medan</button>
+      <button class="tab-btn" data-tab="log">📜 Log Aktiviti</button>
+    </nav>
+
+    <section class="tab-content" id="profilesTab">
+      <div class="toolbar">
+        <button id="addProfile" class="btn btn-primary">➕ Tambah Profil</button>
+      </div>
+      <div id="profilesList" class="list"></div>
+    </section>
+
+    <section class="tab-content hidden" id="mappingsTab">
+      <div class="toolbar">
+        <select id="mappingHost" class="select-small">
+          <option value="idme.moe.gov.my">idme.moe.gov.my</option>
+          <option value="sgmy.moe.gov.my">sgmy.moe.gov.my</option>
+          <option value="mysst.moe.gov.my">mysst.moe.gov.my</option>
+          <option value="apdmkpm.moe.gov.my">apdmkpm.moe.gov.my</option>
+          <option value="moe.gov.my">*.moe.gov.my (umum)</option>
+        </select>
+        <button id="addMapping" class="btn btn-primary">➕ Tambah Medan</button>
+      </div>
+      <div id="mappingsList" class="list"></div>
+    </section>
+
+    <section class="tab-content hidden" id="logTab">
+      <div id="logList" class="list log"></div>
+    </section>
+  </div>
+
+  <!-- Profile Edit Modal -->
+  <div class="modal hidden" id="profileModal">
+    <div class="modal-content">
+      <h2 id="modalTitle">Tambah Profil</h2>
+      <form id="profileForm">
+        <div class="form-grid">
+          <div><label>Nama Penuh</label><input type="text" name="name" required></div>
+          <div><label>No. IC</label><input type="text" name="ic" required placeholder="YYMMDD-##-####"></div>
+          <div><label>Kod Sekolah</label><input type="text" name="schoolCode" required></div>
+          <div><label>Nama Sekolah</label><input type="text" name="schoolName" required></div>
+          <div><label>ID Guru</label><input type="text" name="teacherId" placeholder="G123456"></div>
+          <div><label>Email</label><input type="email" name="email"></div>
+          <div><label>Telefon</label><input type="text" name="phone"></div>
+          <div><label>Bahagian</label><input type="text" name="department"></div>
+          <div><label>Jawatan</label><input type="text" name="position" value="Guru"></div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" id="cancelProfile" class="btn btn-secondary">Batal</button>
+          <button type="submit" class="btn btn-primary">Simpan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Mapping Edit Modal -->
+  <div class="modal hidden" id="mappingModal">
+    <div class="modal-content">
+      <h2 id="mappingTitle">Tambah Medan</h2>
+      <form id="mappingForm">
+        <input type="hidden" name="id">
+        <div class="form-group">
+          <label>Hostname</label>
+          <input type="text" name="host" required>
+        </div>
+        <div class="form-group">
+          <label>ID Medan (nama logik)</label>
+          <input type="text" name="fieldId" required>
+        </div>
+        <div class="form-group">
+          <label>Pilih Mediator (CSS Selector / name)</label>
+          <input type="text" name="selector" required placeholder="#nama_penuh atau no_ic">
+        </div>
+        <div class="form-group">
+          <label>Sumber Data</label>
+          <select name="source">
+            <option value="identity">Profil Identiti</option>
+            <option value="rph">Data RPH</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Kunci Sumber (dot-path)</label>
+          <input type="text" name="sourceKey" required placeholder="contoh: name, ic, teacherId">
+        </div>
+        <div class="form-group">
+          <label>Transform</label>
+          <select name="transform">
+            <option value="">Tiada</option>
+            <option value="upper">UPPER</option>
+            <option value="lower">lower</option>
+            <option value="title">Title Case</option>
+            <option value="ic2dob">IC → Tarikh Lahir</option>
+            <option value="ic2age">IC → Umur</option>
+            <option value="ic2state">IC → Negeri</option>
+          </select>
+        </div>
+        <div class="modal-actions">
+          <button type="button" id="cancelMapping" class="btn btn-secondary">Batal</button>
+          <button type="submit" class="btn btn-primary">Simpan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="options.js"></script>
+</body>
+</html>

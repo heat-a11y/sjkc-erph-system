@@ -1,0 +1,121 @@
+/* ===== Popup CSS — matches SJKC Pin Min aesthetic ===== */
+:root {
+  --bg: #FFF8F0;
+  --card: #FFFFFF;
+  --primary: #C4956A;
+  --primary-dark: #8B5A2B;
+  --text: #3A2A1A;
+  --text-muted: #8B5A2B;
+  --border: #C4956A;
+  --border-light: #E6D3B3;
+  --danger: #c0392b;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 13px;
+  background: var(--bg);
+  color: var(--text);
+  width: 320px;
+  padding: 10px;
+}
+.header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--border-light);
+  margin-bottom: 10px;
+}
+.logo { font-size: 22px; }
+.header-text h1 { font-size: 14px; font-weight: 700; color: var(--primary-dark); }
+.header-text p { font-size: 10px; color: var(--text-muted); }
+
+.status-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  background: var(--card);
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  margin-bottom: 10px;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+.spinner {
+  width: 10px;
+  height: 10px;
+  border: 1.5px solid var(--border-light);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  display: none;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.spinner.active { display: block; }
+
+.section { margin-bottom: 10px; }
+.section label {
+  display: block;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+.select, input[type="text"], input[type="password"] {
+  width: 100%;
+  padding: 6px 8px;
+  font-size: 12px;
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  background: var(--card);
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.2s;
+}
+.select:focus, input:focus { border-color: var(--primary); }
+.select { padding-right: 24px; }
+
+.btn {
+  width: 100%;
+  padding: 8px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: #fff;
+}
+.btn-primary:hover { opacity: 0.9; }
+.btn-secondary {
+  background: var(--card);
+  color: var(--primary-dark);
+  border: 1px solid var(--border-light);
+}
+.btn-secondary:hover { background: var(--border-light); }
+
+.log-container {
+  margin-top: 8px;
+  max-height: 120px;
+  overflow-y: auto;
+  font-size: 10px;
+}
+.log-item {
+  padding: 3px 6px;
+  border-radius: 4px;
+  margin-bottom: 2px;
+  background: var(--card);
+  border: 1px solid var(--border-light);
+  color: var(--text-muted);
+  word-break: break-word;
+}
+.log-item.success { color: #059669; border-color: #a7f3d0; }
+.log-item.error { color: var(--danger); border-color: #fecaca; }

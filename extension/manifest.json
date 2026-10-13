@@ -1,0 +1,52 @@
+{
+  "manifest_version": 3,
+  "name": "eRPH-PM IDMe AutoFill",
+  "description": "Auto-fill teacher identity & RPH data into Malaysian MOE IDMe portal (idme.moe.gov.my) and related systems",
+  "version": "1.0.0",
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_title": "eRPH-PM IDMe AutoFill"
+  },
+  "options_page": "options/options.html",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage"
+  ],
+  "host_permissions": [
+    "*://idme.moe.gov.my/*",
+    "*://idme.gov.my/*",
+    "*://sgmy.moe.gov.my/*",
+    "*://mysst.moe.gov.my/*",
+    "*://apdmkpm.moe.gov.my/*",
+    "*://*.moe.gov.my/*",
+    "*://*.kpm.gov.my/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "*://idme.moe.gov.my/*",
+        "*://idme.gov.my/*",
+        "*://sgmy.moe.gov.my/*",
+        "*://mysst.moe.gov.my/*",
+        "*://apdmkpm.moe.gov.my/*",
+        "*://*.moe.gov.my/*",
+        "*://*.kpm.gov.my/*"
+      ],
+      "js": ["dist/content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "background": {
+    "service_worker": "dist/background.js"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  }
+}

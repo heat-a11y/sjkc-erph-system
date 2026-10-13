@@ -1,0 +1,8 @@
+{
+  "name": "sjkc-erph-system",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": ["extension", "ai-content", "face-attendance"],
+  "description": "SJKC Pin Min RPH System — Chrome extension + AI content generator + face attendance module",
+  "license": "MIT"
+}

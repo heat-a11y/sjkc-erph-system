@@ -1,0 +1,19 @@
+{
+  "name": "erph-pm-extension",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Chrome extension: auto-fill MOE IDMe portal with SJKC Pin Min teacher identity + RPH data",
+  "scripts": {
+    "dev": "vitest",
+    "test": "vitest run",
+    "build": "node build.js",
+    "lint": "npx tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.272",
+    "esbuild": "^0.24.0",
+    "happy-dom": "^21.0.1",
+    "typescript": "^5.6.0",
+    "vitest": "^2.1.0"
+  }
+}

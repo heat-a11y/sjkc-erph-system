@@ -1,0 +1,18 @@
+{
+  "name": "erph-pm-face-attendance",
+  "version": "1.0.0",
+  "private": true,
+  "description": "In-browser face recognition attendance module for eRPH-PM (replaces removed face_engine.js)",
+  "type": "module",
+  "main": "dist/face-attendance.js",
+  "scripts": {
+    "dev": "vitest",
+    "test": "vitest run",
+    "build": "tsc --noEmit && echo 'Type-check OK'"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.0",
+    "vitest": "^2.1.0",
+    "happy-dom": "^17.0.0"
+  }
+}

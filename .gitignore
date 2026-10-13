@@ -1,0 +1,12 @@
+node_modules/
+dist/
+*.local
+.vercel/
+.vercelignore
+.DS_Store
+*.log
+coverage/
+.nyc_output/
+exam-gen/
+opencode-telegram-bot/
+tanglung/
