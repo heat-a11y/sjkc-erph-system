@@ -1,19 +1,19 @@
 # eRPH-PM System
-Sistem automasi RPH untuk **SJKC Pin Min, Bidor** — Chrome extension, AI content generator, dan modul kehadiran wajah, semua dalam satu monorepo.
+Automated RPH planner for **SJKC Pin Min, Bidor** — Chrome extension for auto-filling MOE IDMe, AI RPH content generator, and face-based attendance, all in one monorepo.
 
-## Apa Ini?
+## What Is This?
 
-Sistem ini menggantikan [ez-rph](https://ez-rph.gataltech.com/) untuk keperluan SJKC Pin Min:
+A system adapted from [ez-rph](https://ez-rph.gataltech.com/) for SJKC Pin Min:
 
-| Komponen | Kegunaan |
+| Component | Purpose |
 |---|---|
-| Chrome Extension | Isi otomatis form IDMe MOE (idme.moe.gov.my) dengan data guru & RPH |
-| AI Content Generator | Hasilkan aktiviti, objektif, refleksi RPH secara AI (Bahasa Melayu) |
-| Face Attendance | Kehadiran kelas dengan pengenecaman wajah (mengganti face_engine.js yang hilang) |
+| Chrome Extension | Auto-fills the MOE IDMe portal (`idme.moe.gov.my`) with teacher identity and RPH data |
+| AI Content Generator | Generates RPH activities, learning objectives, reflections, and remedial notes via LLM |
+| Face Attendance | Face recognition attendance system (replaces the removed `face_attendance/face_engine.js`) |
 
-**Palet warna:** `#C4956A` (saiz baju SJKC)
+**Color theme:** `#C4956A` (SJKC school uniform color)
 
-## Struktur Projek
+## Project Structure
 
 ```
 Work/
@@ -21,28 +21,29 @@ Work/
   extension/        # Chrome Extension (MV3)
     manifest.json
     src/            # core.ts, background.ts, content.ts, default-mappings.ts
-    popup/          # UI popup (popup.html + popup.js)
-    options/        # Halaman pengurusan profil dan field mapping
+    popup/          # Popup UI (popup.html + popup.js)
+    options/        # Profile management and field mapping editor
     test/           # 19 unit tests
+    icons/          # SVG + PNG icons (16/32/48/128px)
   ai-content/       # AI RPH content generator
     src/index.ts     # Prompt builder, OpenRouter client, credit tracker
-    api/             # Serverless endpoint (deploy ke Vercel)
+    api/             # Serverless endpoint (deploy to Vercel)
     test/            # 31 unit tests
   face-attendance/  # Face recognition attendance
     src/face-attendance.ts
     test/            # 18 unit tests
-  SPEC.md           # Spesifikasi penuh
+  cron/             # Cron jobs (AQI watchdog, English homework, etc.)
+  SPEC.md           # Full specification
 ```
 
-## Pemasangan
+## Installation
 
-### Syarat
+### Prerequisites
 - Node.js 20+
 - npm
-- Python 3.11+ (untuk kron sistem)
 - Git
 
-### Clone & Install
+### Clone and Install
 
 ```bash
 git clone https://github.com/heat-a11y/sjkc-erph-system.git
@@ -50,63 +51,68 @@ cd sjkc-erph-system
 npm install
 ```
 
-## Penggunaan
+## Usage
 
-### 1. Chrome Extension — Isi Form IDMe Secara Automatik
+### 1. Chrome Extension — Auto-Fill MOE IDMe Forms
 
-**Apa yang dilakukan:** Extension ini mendeteksi apabila anda membuka portal IDMe MOE (`idme.moe.gov.my`), kemudian mengisi form dengan data guru (nama, no. KP, email, sekolah, dll.) dan data RPH yang telah anda simpan.
+**What it does:** Detects when you're on the MOE IDMe portal (`idme.moe.gov.my`), then auto-fills form fields with your saved teacher profile data (name, IC, email, school, state, district, etc.) and RPH data.
 
-**Cara pakai:**
+**Setup:**
 
-1. **Build extension:**
+1. **Build the extension:**
 ```bash
 cd extension
 node build.js
 ```
 
-2. **Muat extension di Chrome:**
-   - Buka `chrome://extensions/`
-   - Aktifkan **Developer mode** (toggle kanan atas)
-   - Klik **Load unpacked**
-   - Pilih folder `extension/`
-   - Extension akan muncul dengan ikon keris petandan (🇲🇾)
+2. **Load in Chrome:**
+   - Go to `chrome://extensions/`
+   - Toggle **Developer mode** (top-right corner)
+   - Click **Load unpacked**
+   - Select the `extension/` folder
+   - The extension icon (🇲🇾) appears in your toolbar
 
-3. **Simpan profil guru:**
-   - Klik ikon extension → **Options**
-   - Isi nama, no. KP, email, telefon, sekolah
-   - Simpan profil
-   - Pilih profil sebagai "active"
+3. **Save your teacher profile:**
+   - Click the extension icon → **Options**
+   - Enter your name, IC number, email, phone, school, state, district
+   - Click **Save Profile**
+   - Set it as the active profile
 
-4. **Isi form IDMe:**
-   - Buka [idme.moe.gov.my](https://idme.moe.gov.my)
-   - Login seperti biasa
-   - Klik ikon extension → **Fill Form**
-   - Extension otomatis mengisi field yang ada di halaman
-   - Badge kuning 🇲🇾 akan muncul di bawah-halaman-kanan bila extension siap
+4. **Auto-fill on IDMe:**
+   - Open [idme.moe.gov.my](https://idme.moe.gov.my) and log in
+   - Navigate to the form you need to fill
+   - Click the extension icon → **Fill Form**
+   - The extension auto-fills all matching fields
+   - A 🇲🇾 badge appears at bottom-right on MOE sites when the extension is active
 
-**Field mapping default:** extension sudah termasuk selector untuk field-field biasa di IDMe: nama guru, no. KP, email, telefon, sekolah, negeri, daerah. Kalau ada field baru, edit di Options → Field Mappings.
+**Default field mappings:** The extension includes pre-configured CSS selectors for common IDMe fields (name, IC/noKP, email, phone, school, state, district). If a field doesn't auto-fill, edit the selectors in **Options → Field Mappings**.
 
-### 2. AI Content Generator — Hasilkan RPH Secara AI
+### 2. AI Content Generator — Auto-Generate RPH Content
 
-**Apa yang dilakukan:** AI generator ini menghasilkan perkongsian RPH (Ringkasan Perkongsian Hasil Belajar) penuh — aktiviti, objektif PBD, refleksi, dan cadangan remedial — berdasarkan topik DSKP KSSR yang anda pilih.
+**What it does:** Generates complete RPH (Ringkasan Perkongsian Hasil Belajar) content — activities, learning objectives (PBD), reflections, and remedial suggestions — following KSSR DSKP standards. Content is generated in Bahasa Malaysia by default.
 
-**Deploy (Vercel — 1 minit):**
-
-```bash
-cd ai-content
-npm install          # esbuild, vitest, dll.
-vercel --y           # deploy otomatis ke Vercel
-# Atau gunakan: vercel --prod
-```
-
-**Atau jalankan secara local:**
+**Deploy to Vercel (recommended):**
 
 ```bash
 cd ai-content
 npm install
-OPENROUTER_API_KEY=sk-xxxxxxxx npx tsx api/generate-content.ts
-# Atau panggil dari CLI:
-curl -X POST localhost:3000/api/generate-content \
+vercel --y           # auto-deploys to Vercel
+```
+
+**Or run locally:**
+
+```bash
+cd ai-content
+npm install
+# Set your OpenRouter API key:
+export OPENROUTER_API_KEY="sk-xxxxxxxx"
+# Then deploy locally or integrate into your web app
+```
+
+**API usage:**
+
+```bash
+curl -X POST https://your-vercel-url/api/generate-content \
   -H "Content-Type: application/json" \
   -d '{
     "subject": "BM",
@@ -120,98 +126,113 @@ curl -X POST localhost:3000/api/generate-content \
   }'
 ```
 
-**API request format:**
-```json
-POST /api/generate-content
-{
-  "subject": "BM",          // [BM|BI|BC|Math|Science| ...]
-  "year": 3,                // 1-6 ( tahun SJKC )
-  "language": "bm",         // default: bm
-  "theme": "Sayangi Keluarga",  // tema DSKP
-  "unit": "Saya Sayang",        // unit tema
-  "topic": "PKJR",              // pokok konsep
-  "sk": ["1.1"],                // standard kurikulum
-  "sp": ["1.1.1"],              // standard progres
-  "studentCount": 25            // jumlah murid
-}
-```
+**API request fields:**
+| Field | Type | Required | Example |
+|---|---|---|---|
+| `subject` | string | Yes | `"BM"` (BM, BI, BC, Math, Science, etc.) |
+| `year` | number | Yes | `3` (1–6) |
+| `theme` | string | Yes | `"Sayangi Keluarga"` |
+| `unit` | string | Yes | `"Saya Sayang"` |
+| `topic` | string | No | `"PKJR"` (PKJR, PKn, etc.) |
+| `sk` | string[] | Yes | `["1.1"]` (Standard Kurikulum) |
+| `sp` | string[] | Yes | `["1.1.1"]` (Standard Progres) |
+| `studentCount` | number | Yes | `25` |
+| `language` | string | No | `"bm"` (default: `"bm"`) |
+
+**Response:** Returns JSON with `activities`, `objectives`, `reflection`, `remedial` sections — ready to paste into IDMe.
 
 **AI model:** `inclusionai/ling-3.0-flash-sante:free` (via OpenRouter)
 
-**Credit system:** 20 kredit percubaan percubaan per hari (reset setiap tengah malam). Bila habis, dapat error `AI_RATE_LIMIT`.
+**Credit system:** 20 AI credits per day (resets at midnight Malaysia time). When exhausted, the API returns `429 AI_RATE_LIMIT`.
 
-### 3. Face Attendance — Kehadiran Wajah
+### 3. Face Attendance — Face Recognition Attendance
 
-**Apa yang dilakukan:** Modul ini memindai wajah murid menggunakan kamera, mencocokkkan dengan template yang telah didaftarkan, dan mencatat kehadiran. Mengganti `face_attendance/face_engine.js` yang sudah dihapus dari ez-rph.
+**What it does:** Uses your laptop/webcam to detect students' faces, match against registered templates, and log attendance. Replaces the removed `face_attendance/face_engine.js`.
 
-**Cara pakai (di dalam erph-pm web app):**
+**Integration (in your web app):**
 
 ```ts
 import { FaceAttendance } from "../../face-attendance/src/face-attendance";
 
 const fa = new FaceAttendance();
-await fa.init();  // minta akses kamera
+await fa.init();  // requests camera access
 
-// Daftar template baru (sekali, untuk setiap murid)
-const descriptor = await fa.enroll("murid-001", "Ahmad", "3 Blue", videoElement);
-// Template disimpan di localStorage otomatis
+// Register a new student (one-time per student)
+const descriptor = await fa.enroll(
+  "student-001",   // student ID
+  "Ahmad",         // student name
+  "3 Blue",        // class
+  videoElement     // HTMLVideoElement from camera
+);
+// Template automatically saved to localStorage
 
-// Absen kelas
+// Take attendance for the class
 const results = await fa.recognize(videoElement, {
-  threshold: 0.6,  // confidence minimum
-  timeoutMs: 10000, // batas waktu 10 saat
+  threshold: 0.6,      // minimum confidence (0.0–1.0)
+  timeoutMs: 10000,    // timeout after 10 seconds
 });
 // results: [{ studentId, studentName, confidence, recognized }]
 ```
 
-**Test:**
-```bash
-cd face-attendance
-npm install
-npx vitest run
-```
+### Combined Workflow
 
-## Penggunaan Kombinasi (Full Workflow)
-
-1. **Generate RPH content** pakai AI generator → dapatkan aktiviti dan objektif
-2. **Buka IDMe MOE** → buka profil RPH yang dihasilkan → extension otomatis isi form
-3. **Ambil kehadiran** → gunakan face attendance module → export senarai kehadiran
+1. **Generate RPH content** using the AI content generator → get activities, objectives, reflections
+2. **Go to IDMe portal** → fill the RPH form → extension auto-fills your teacher profile + RPH data
+3. **Take attendance** using face recognition → export attendance list
 
 ## Testing
 
 ```bash
-# Semua test (dari root)
-cd extension && npx vitest run      # 19 test
-cd ../ai-content && npx vitest run  # 31 test
-cd ../face-attendance && npx vitest run  # 18 test
+# Run all tests
+cd extension && npx vitest run        # 19 tests
+cd ../ai-content && npx vitest run    # 31 tests
+cd ../face-attendance && npx vitest run  # 18 tests
 ```
 
-Total: **68 test, semua lolos.**
+**Total: 68 tests, all passing.**
 
-## Konfigurasi Cron (Opsional)
+## Cron Jobs (Automated Tasks)
 
-Sistem sudah ada kron pekerjaan untuk:
+This system includes cron jobs for SJKC Pin Min:
 
-1. **AQI Watchdog** — harian 06:00, semak kualiti udara Ipoh/Tanjung Malim, batalkan baskerball bila AQI > 100
-2. **English Homework** — Jumaat 18:00
-3. **Bedtime Stories** — Sabtu 20:00
-4. **Mini-Quiz** — Minggu 10:00
+1. **AQI Watchdog** — Daily at 06:00. Checks air quality at Ipoh (4.59,101.10) and Tanjung Malim (3.68,101.52). Cancels basketball if AQI > 100 (US EPA standard). Sends 3-language alert.
+2. **English Homework** — Fridays at 18:00
+3. **Bedtime Stories** — Saturdays at 20:00
+4. **Mini-Quiz** — Sundays at 10:00
 
 ```bash
 cd cron
-python3 main.py          # jalankan semua kron
-python3 tests/run_tests.py  # test kron
+python3 main.py           # run all cron jobs
+python3 tests/run_tests.py  # test cron infrastructure
 ```
 
-## Deploy & CI
+Scripts live in `cron/cronjobs/scripts/`.
 
-- **GitHub repo:** `heat-a11y/sjkc-erph-system` (main branch)
-- **AI content:** deploy ke Vercel (`vercel --prod`)
-- **Chrome extension:** build → load di `chrome://extensions/`
-- **Face attendance:** import ke erph-pm web app
+## Deployment
 
-## Kontak
+| Component | Where | How |
+|---|---|---|
+| AI Content API | Vercel | `cd ai-content && vercel --prod` |
+| Chrome Extension | Chrome | Build with `node build.js`, then load unpacked |
+| Face Attendance | erph-pm web app | Import the module and integrate |
+| Cron Jobs | Local server | `cd cron && python3 main.py` |
 
-- **WhatsApp:** wa.me/60128756026
-- **GitHub:** heat-a11y/sjkc-erph-system
-- **Issue?** Buka GitHub issue atau tanya di DM.
+**GitHub repo:** [heat-a11y/sjkc-erph-system](https://github.com/heat-a11y/sjkc-erph-system)
+
+## Configuration
+
+### Environment Variables (AI Content API)
+```
+OPENROUTER_API_KEY=sk-xxxxxxxx
+```
+
+### Chrome Extension Permissions
+- `storage` — save profiles and mappings
+- `activeTab` — access current tab
+- `scripting` — inject content script
+- `host_permissions` — access to `*.moe.gov.my` and `*.kpm.gov.my` domains
+
+## Contact
+
+- **GitHub:** [heat-a11y/sjkc-erph-system](https://github.com/heat-a11y/sjkc-erph-system)
+- Open a GitHub issue for bugs or feature requests.
